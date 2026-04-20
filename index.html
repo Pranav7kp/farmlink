@@ -6,6 +6,7 @@
 <title>FarmLink | Farm-to-Table Marketplace</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
+/* Original Styles Preserved */
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --green:#2d6a4f;--green-light:#52b788;--green-pale:#d8f3dc;--green-dark:#1b4332;
@@ -176,7 +177,6 @@ footer strong{color:#fff}
   </div>
 </nav>
 
-<!-- HOME -->
 <div class="page active" id="page-home">
   <div class="hero">
     <div class="hero-content">
@@ -222,17 +222,14 @@ footer strong{color:#fff}
   <footer><strong>FarmLink</strong> — Empowering local farmers across India &nbsp;·&nbsp; 10% platform commission &nbsp;·&nbsp; © 2025</footer>
 </div>
 
-<!-- CART -->
 <div class="page" id="page-cart">
   <div class="page-wrap" style="max-width:700px">
     <button class="back-btn" onclick="showPage('home')">← Back to Market</button>
     <h2 style="font-size:1.8rem;margin-bottom:4px">Your Cart</h2>
-    <p style="color:var(--muted);font-size:15px;margin-bottom:28px">Review items before checkout</p>
     <div id="cartContent"></div>
   </div>
 </div>
 
-<!-- CHECKOUT -->
 <div class="page" id="page-checkout">
   <div class="checkout-wrap">
     <button class="back-btn" onclick="showPage('cart')">← Back to Cart</button>
@@ -241,179 +238,74 @@ footer strong{color:#fff}
       <div class="order-items" id="orderItemsList"></div>
       <div class="form-group">
         <label class="form-label">Delivery Address</label>
-        <textarea class="form-input" id="deliveryAddr" style="height:78px;resize:none" placeholder="House No, Street, Landmark, City, PIN..."></textarea>
+        <textarea class="form-input" id="deliveryAddr" style="height:78px;resize:none" placeholder="Address..."></textarea>
       </div>
       <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Full Name</label>
-          <input class="form-input" type="text" id="buyerName" placeholder="Your name">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Phone</label>
-          <input class="form-input" type="tel" id="buyerPhone" placeholder="10-digit number">
-        </div>
+        <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" type="text" id="buyerName"></div>
+        <div class="form-group"><label class="form-label">Phone</label><input class="form-input" type="tel" id="buyerPhone"></div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Payment Method</label>
-        <div class="payment-opts">
-          <div class="payment-opt selected" onclick="selectPayment(this,'cod')">💵 Cash on Delivery</div>
-          <div class="payment-opt" onclick="selectPayment(this,'online')">📱 Online Payment</div>
-        </div>
-      </div>
-      <div style="background:#f9fafb;border-radius:14px;padding:18px;margin-top:20px;border:1px solid var(--border)">
-        <div class="summary-row"><span>Subtotal</span><span id="coSubtotal">₹0</span></div>
-        <div class="summary-row"><span>Delivery</span><span style="color:var(--green)">FREE</span></div>
-        <div class="summary-total"><span>Total</span><span id="coTotal" style="color:var(--green)">₹0</span></div>
-      </div>
-      <button class="btn btn-primary" style="width:100%;margin-top:20px;padding:15px;font-size:16px;border-radius:16px;justify-content:center" onclick="placeOrder()">Confirm Order →</button>
+      <div class="summary-total"><span>Total</span><span id="coTotal" style="color:var(--green)">₹0</span></div>
+      <button class="btn btn-primary" style="width:100%;margin-top:20px;padding:15px;justify-content:center" onclick="placeOrder()">Confirm Order →</button>
     </div>
   </div>
 </div>
 
-<!-- ORDER SUCCESS -->
 <div class="page" id="page-success">
   <div class="page-wrap">
     <div class="success-wrap">
       <div class="success-icon">✅</div>
-      <h2 style="font-size:2rem;margin-bottom:12px">Order Placed!</h2>
-      <p style="color:var(--muted);max-width:380px;margin:0 auto 28px;line-height:1.7">Your order is confirmed and the farmer has been notified. Expect delivery within 24–48 hours.</p>
-      <div style="background:var(--green-pale);border-radius:16px;padding:20px;max-width:300px;margin:0 auto 28px;border:1px solid rgba(82,183,136,.25)">
-        <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Order ID</div>
-        <div id="orderId" style="font-family:'Fraunces',serif;font-size:1.2rem;font-weight:700;color:var(--green-dark)"></div>
-      </div>
-      <button class="btn btn-primary" style="padding:14px 28px;font-size:15px" onclick="cart=[];updateBadge();showPage('home')">Continue Shopping</button>
+      <h2>Order Placed!</h2>
+      <p id="orderId"></p>
+      <button class="btn btn-primary" onclick="cart=[];updateBadge();showPage('home')">Continue Shopping</button>
     </div>
   </div>
 </div>
 
-<!-- SELL -->
 <div class="page" id="page-sell">
   <div class="sell-wrap">
     <button class="back-btn" onclick="showPage('home')">← Back to Market</button>
-    <h2 style="font-size:1.8rem;margin-bottom:4px">List Your Harvest</h2>
-    <p style="color:var(--muted);font-size:15px;margin-bottom:28px">Reach thousands of local buyers directly</p>
+    <h2>List Your Harvest</h2>
     <div class="big-card">
-      <div class="form-group">
-        <label class="form-label">Product Name</label>
-        <input class="form-input" type="text" id="sName" placeholder="e.g. Organic Tomatoes">
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Quantity</label>
-          <input class="form-input" type="number" id="sQty" placeholder="50">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Unit</label>
-          <select class="form-input"><option>KG</option><option>Quintal</option><option>Piece</option><option>Bundle</option></select>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Price per unit (₹)</label>
-          <input class="form-input" type="number" id="sPrice" placeholder="80" oninput="calcFee()">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Category</label>
-          <select class="form-input"><option>Vegetable</option><option>Fruit</option><option>Spice</option><option>Root Crop</option><option>Honey / Dairy</option></select>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Freshness / Expiry</label>
-          <input class="form-input" type="text" placeholder="e.g. Harvested today">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Location</label>
-          <input class="form-input" type="text" placeholder="Village / District">
-        </div>
-      </div>
+      <div class="form-group"><label class="form-label">Product Name</label><input class="form-input" type="text" id="sName"></div>
+      <div class="form-group"><label class="form-label">Price per unit (₹)</label><input class="form-input" type="number" id="sPrice" oninput="calcFee()"></div>
       <div class="fee-box" id="feeBox" style="display:none">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--green-dark);margin-bottom:10px">Commission Breakdown</div>
-        <div class="fee-row"><span>Sale Price</span><span id="fSale">₹0</span></div>
-        <div class="fee-row" style="color:#ef4444"><span>Platform Fee (10%)</span><span id="fFee">₹0</span></div>
         <div class="fee-earn"><span>You Earn</span><span id="fEarn">₹0</span></div>
       </div>
-      <button class="btn btn-primary" style="width:100%;margin-top:24px;padding:14px;font-size:15px;border-radius:14px;justify-content:center" onclick="submitListing()">Review & List Produce →</button>
+      <button class="btn btn-primary" style="width:100%;margin-top:24px;justify-content:center" onclick="submitListing()">List Produce →</button>
     </div>
   </div>
 </div>
 
-<!-- AUTH -->
 <div class="page" id="page-auth">
   <div class="auth-wrap">
     <div class="auth-card">
-      <div style="text-align:center;margin-bottom:24px">
-        <div class="logo-icon" style="margin:0 auto 12px;width:50px;height:50px;font-size:22px">F</div>
-        <h2 style="font-size:1.5rem">Welcome to FarmLink</h2>
-        <p style="font-size:13px;color:var(--muted);margin-top:4px">Fresh produce, direct from farms</p>
-      </div>
       <div class="auth-tabs">
         <button class="auth-tab active" id="tabLogin" onclick="setAuthTab('login')">Sign In</button>
         <button class="auth-tab" id="tabSignup" onclick="setAuthTab('signup')">Create Account</button>
       </div>
-      <!-- LOGIN -->
       <div class="auth-form active" id="authLogin">
-        <div class="form-group"><label class="form-label">Email or Phone</label><input class="form-input" type="text" placeholder="you@example.com"></div>
-        <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password" placeholder="••••••••"></div>
-        <div style="text-align:right;margin-bottom:18px"><button style="background:none;border:none;font-size:12px;font-weight:600;color:var(--green);cursor:pointer;font-family:'DM Sans',sans-serif" onclick="setAuthStep('forgot')">Forgot Password?</button></div>
-        <button class="btn btn-primary" style="width:100%;justify-content:center;padding:13px;font-size:15px;border-radius:13px" onclick="showToast('✅ Signed in successfully!');showPage('home')">Sign In</button>
-        <div class="divider">or</div>
-        <button class="social-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>Continue with Google</button>
+        <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="text"></div>
+        <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password"></div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="showPage('home')">Sign In</button>
       </div>
-      <!-- SIGNUP -->
       <div class="auth-form" id="authSignup">
-        <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" type="text" placeholder="Ravi Kumar"></div>
-        <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" placeholder="you@example.com"></div>
-        <div class="form-group"><label class="form-label">Phone</label><input class="form-input" type="tel" placeholder="10-digit mobile number"></div>
-        <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password" placeholder="Create a strong password"></div>
-        <p style="font-size:11px;color:var(--muted);margin-bottom:16px;line-height:1.6">By creating an account you agree to our <a href="#" style="color:var(--green)">Terms</a>. Sellers are charged a 10% platform commission per sale.</p>
-        <button class="btn btn-primary" style="width:100%;justify-content:center;padding:13px;font-size:15px;border-radius:13px" onclick="showToast('✅ Account created! Welcome to FarmLink.');showPage('home')">Create Account</button>
-      </div>
-      <!-- FORGOT -->
-      <div class="auth-form" id="authForgot">
-        <h3 style="font-size:1.2rem;margin-bottom:6px">Reset Password</h3>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:20px">Enter your registered email to receive an OTP</p>
-        <div id="forgotStep1">
-          <div class="form-group"><label class="form-label">Email Address</label><input class="form-input" type="email" id="forgotEmail" placeholder="you@example.com"></div>
-          <button class="btn btn-primary" style="width:100%;justify-content:center;padding:13px;border-radius:13px" onclick="sendOtp()">Send OTP</button>
-        </div>
-        <div id="forgotStep2" style="display:none;text-align:center">
-          <p style="font-size:13px;color:var(--muted);margin-bottom:4px">OTP sent to <strong id="otpEmail"></strong></p>
-          <p style="font-size:12px;color:var(--muted);margin-bottom:4px">Enter the 4-digit code</p>
-          <div class="otp-inputs">
-            <input class="otp-input" maxlength="1" oninput="otpNext(this,1)">
-            <input class="otp-input" maxlength="1" oninput="otpNext(this,2)">
-            <input class="otp-input" maxlength="1" oninput="otpNext(this,3)">
-            <input class="otp-input" maxlength="1" oninput="otpNext(this,4)">
-          </div>
-          <button class="btn btn-primary" style="width:100%;justify-content:center;padding:13px;border-radius:13px" onclick="verifyOtp()">Verify & Reset</button>
-        </div>
-        <div style="text-align:center;margin-top:16px"><button style="background:none;border:none;font-size:13px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif" onclick="setAuthStep('login')">← Back to Login</button></div>
+        <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" type="text"></div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="showPage('home')">Create Account</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- MODAL -->
 <div class="modal-overlay" id="productModal" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <button class="close-btn" onclick="closeModal()">✕</button>
-    <img id="mImg" src="" alt="" class="modal-img">
+    <img id="mImg" src="" class="modal-img">
     <div class="modal-body">
-      <div class="modal-top">
-        <h2 id="mTitle" class="modal-title"></h2>
-        <span id="mPrice" class="modal-price"></span>
-      </div>
+      <h2 id="mTitle" class="modal-title"></h2>
       <p id="mSeller" class="modal-seller"></p>
       <p id="mDesc" class="modal-desc"></p>
       <div class="modal-actions">
-        <div class="qty-control">
-          <button class="qty-btn" onclick="changeQty(-1)">−</button>
-          <span class="qty-val" id="modalQty">1</span>
-          <button class="qty-btn" onclick="changeQty(1)">+</button>
-        </div>
-        <button class="btn btn-primary" style="flex:1;justify-content:center;border-radius:12px;padding:12px" onclick="addToCartModal()">Add to Cart</button>
-        <button class="btn btn-outline" style="border-radius:12px;padding:12px" onclick="addToCartModal();closeModal();showPage('checkout')">Buy Now</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="addToCartModal()">Add to Cart</button>
       </div>
     </div>
   </div>
@@ -422,23 +314,26 @@ footer strong{color:#fff}
 <div class="toast" id="toast"></div>
 
 <script>
+/* 1. DATA DEFINITION FIRST */
 const products = [
-  {id:1,title:"Carrot",price:50,seller:"Ravi Kumar",img:"https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=600",cat:"root",badge:"Just Harvested",desc:"Crunchy, sweet carrots from Ravi's organic farm in Rajasthan. Rich in beta-carotene and vitamin A."},
-  {id:2,title:"Raw Honey",price:420,seller:"Anjali M.",img:"https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=600",cat:"sweet",badge:"Pure Natural",desc:"Unprocessed wildflower honey from bee farms in the Western Ghats. No additives, no preservatives."},
-  {id:3,title:"Onion",price:40,seller:"Suresh P.",img:"https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=600",cat:"vegetable",badge:"Bulk Available",desc:"Red onions with bold flavour grown in Nashik, Maharashtra. Ideal for curries and salads."},
-  {id:4,title:"Spinach",price:20,seller:"Kiran G.",img:"https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=600",cat:"vegetable",badge:"Farm Fresh",desc:"Tender, dark green spinach organically grown and harvested the same morning."},
-  {id:5,title:"Tomato",price:30,seller:"Babu R.",img:"https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=600",cat:"vegetable",badge:"Seasonal",desc:"Juicy ripe tomatoes grown in poly-houses near Pune for consistent quality year-round."},
-  {id:6,title:"Potato",price:25,seller:"Mini Jacob",img:"https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=600",cat:"root",badge:"Premium Grade",desc:"Starchy, all-purpose potatoes from the cool Nilgiri hills. Perfect for roasting, boiling, or frying."},
-  {id:7,title:"Ginger",price:180,seller:"Sunny V.",img:"https://images.unsplash.com/photo-1615485500704-8e990f9900f7?w=600",cat:"spice",badge:"Aromatic",desc:"Pungent fresh ginger with high essential oil content from Kerala's spice gardens."},
-  {id:8,title:"Green Chili",price:60,seller:"Latha S.",img:"https://images.unsplash.com/photo-1583119022894-919a68a3d0e3?w=600",cat:"spice",badge:"Extra Hot",desc:"Fiery green chilis from Andhra Pradesh. Perfect for pickles, chutneys, and curries."},
-  {id:9,title:"Pumpkin",price:40,seller:"Joyal K.",img:"https://images.unsplash.com/photo-1570586437263-ab629fccc818?w=600",cat:"vegetable",badge:"Organic",desc:"Large, orange pumpkins with sweet dense flesh — great for Kerala curries and soups."},
-  {id:10,title:"Garlic",price:210,seller:"Abid Shah",img:"https://images.unsplash.com/photo-1540148426945-6cf22a6b2383?w=600",cat:"spice",badge:"Single Bulb",desc:"Large, strong-flavoured garlic bulbs from Madhya Pradesh. Freshly cured for long storage."},
-  {id:11,title:"Cucumber",price:35,seller:"Reena P.",img:"https://images.unsplash.com/photo-1604977042946-1eba9c9ae5b5?w=600",cat:"vegetable",badge:"Farm Fresh",desc:"Cool, crisp cucumbers from greenhouses near Pune — low calorie, perfect for salads and juicing."},
-  {id:12,title:"Beetroot",price:55,seller:"Farmer John",img:"https://images.unsplash.com/photo-1593105544559-ecb03bf76f82?w=600",cat:"root",badge:"Rich in Iron",desc:"Deep purple beetroot bursting with antioxidants, grown without chemicals in Himachal Pradesh."}
+  {id:1,title:"Carrot",price:50,seller:"Ravi Kumar",img:"https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=600",cat:"root",badge:"Just Harvested",desc:"Crunchy carrots from Rajasthan."},
+  {id:2,title:"Raw Honey",price:420,seller:"Anjali M.",img:"honey.jpeg",cat:"sweet",badge:"Pure Natural",desc:"Unprocessed wildflower honey."},
+  {id:3,title:"Onion",price:40,seller:"Suresh P.",img:"https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=600",cat:"vegetable",badge:"Bulk Available",desc:"Red onions from Nashik."},
+  {id:4,title:"Spinach",price:20,seller:"Kiran G.",img:"https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=600",cat:"vegetable",badge:"Farm Fresh",desc:"Organic same-day harvest spinach."},
+  {id:5,title:"Tomato",price:30,seller:"Babu R.",img:"https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=600",cat:"vegetable",badge:"Seasonal",desc:"Juicy tomatoes from Pune."},
+  {id:6,title:"Potato",price:25,seller:"Mini Jacob",img:"potato.jpeg",cat:"root",badge:"Premium Grade",desc:"Potatoes from Nilgiri hills."},
+  {id:7,title:"Ginger",price:180,seller:"Sunny V.",img:"ginger.jpeg",cat:"spice",badge:"Aromatic",desc:"Fresh pungent ginger."},
+  {id:8,title:"Chilli",price:60,seller:"Latha S.",img:"chilli.jpeg",cat:"spice",badge:"Extra Hot",desc:"Fiery chillies from Andhra."},
+  {id:9,title:"Pumpkin",price:40,seller:"Joyal K.",img:"pumpkin.jpeg",cat:"vegetable",badge:"Organic",desc:"Sweet orange pumpkins."},
+  {id:10,title:"Spices",price:210,seller:"Abid Shah",img:"https://images.unsplash.com/photo-1540148426945-6cf22a6b2383?w=600",cat:"spice",badge:"Dried",desc:"High-quality local spices."},
+  {id:11,title:"Cucumber",price:35,seller:"Reena P.",img:"cucumber.jpeg",cat:"vegetable",badge:"Farm Fresh",desc:"Cool crisp cucumbers."},
+  {id:12,title:"Beetroot",price:55,seller:"Farmer John",img:"beetroot.jpeg",cat:"root",badge:"Rich in Iron",desc:"Antioxidant rich beetroots."}
 ];
 
+/* 2. STATE */
 let cart = [], currentProduct = null, modalQty = 1, currentCat = 'all', paymentMethod = 'cod';
 
+/* 3. FUNCTIONS */
 function showPage(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
@@ -450,11 +345,10 @@ function showPage(name) {
 function renderProducts(list) {
   const g = document.getElementById('productGrid');
   document.getElementById('productCount').textContent = list.length + ' items found';
-  if(!list.length){ g.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--muted)"><div style="font-size:48px;margin-bottom:12px">🔍</div><p>No products found. Try a different search.</p></div>'; return; }
   g.innerHTML = list.map(p=>`
     <div class="product-card" onclick="openModal(${p.id})">
       <div class="fresh-badge">${p.badge}</div>
-      <img src="${p.img}" class="product-img" alt="${p.title}" loading="lazy">
+      <img src="${p.img}" class="product-img" alt="${p.title}">
       <div class="product-body">
         <div class="product-tag">${p.cat}</div>
         <div class="product-name">${p.title}</div>
@@ -477,29 +371,21 @@ function setCategory(cat, el) {
 function filterProducts() {
   const q = (document.getElementById('searchInput').value||'').toLowerCase();
   let list = currentCat === 'all' ? products : products.filter(p => p.cat === currentCat);
-  if(q) list = list.filter(p => p.title.toLowerCase().includes(q) || p.seller.toLowerCase().includes(q) || p.cat.toLowerCase().includes(q));
+  if(q) list = list.filter(p => p.title.toLowerCase().includes(q));
   renderProducts(list);
 }
 
-renderProducts(products);
-
 function openModal(id) {
   const p = products.find(x => x.id === id);
-  currentProduct = p; modalQty = 1;
+  currentProduct = p;
   document.getElementById('mTitle').textContent = p.title;
-  document.getElementById('mPrice').textContent = '₹' + p.price + '/kg';
-  document.getElementById('mSeller').textContent = '🌾 Farmer: ' + p.seller;
+  document.getElementById('mSeller').textContent = 'Farmer: ' + p.seller;
   document.getElementById('mDesc').textContent = p.desc;
   document.getElementById('mImg').src = p.img;
-  document.getElementById('mImg').alt = p.title;
-  document.getElementById('modalQty').textContent = 1;
   document.getElementById('productModal').classList.add('show');
-  document.body.style.overflow = 'hidden';
 }
-function closeModal() { document.getElementById('productModal').classList.remove('show'); document.body.style.overflow = ''; }
-function changeQty(d) { modalQty = Math.max(1, modalQty + d); document.getElementById('modalQty').textContent = modalQty; }
-function addToCartModal() { if(!currentProduct) return; addToCart(currentProduct.id, modalQty); closeModal(); }
-function quickAdd(id) { addToCart(id, 1); }
+
+function closeModal() { document.getElementById('productModal').classList.remove('show'); }
 
 function addToCart(id, qty) {
   const ex = cart.find(c => c.id === id);
@@ -507,6 +393,10 @@ function addToCart(id, qty) {
   updateBadge();
   showToast('✅ Added to cart!');
 }
+
+function quickAdd(id) { addToCart(id, 1); }
+function addToCartModal() { if(currentProduct) { addToCart(currentProduct.id, 1); closeModal(); } }
+
 function updateBadge() {
   const total = cart.reduce((s,c) => s+c.qty, 0);
   const b = document.getElementById('cartBadge');
@@ -516,88 +406,45 @@ function updateBadge() {
 
 function renderCart() {
   const c = document.getElementById('cartContent');
-  if(!cart.length) {
-    c.innerHTML='<div class="cart-empty"><div style="font-size:60px;margin-bottom:16px">🛒</div><h3 style="font-size:1.4rem;margin-bottom:8px">Your cart is empty</h3><p style="color:var(--muted);margin-bottom:24px">Browse fresh produce from local farmers</p><button class="btn btn-primary" onclick="showPage(\'home\')">Browse Market</button></div>';
-    return;
-  }
-  const sub = cart.reduce((s,ci) => { const p=products.find(x=>x.id===ci.id); return s+(p?p.price*ci.qty:0); },0);
-  c.innerHTML = `<div class="cart-items">${cart.map(ci=>{const p=products.find(x=>x.id===ci.id);if(!p)return'';return`<div class="cart-item"><img src="${p.img}" class="cart-item-img" alt="${p.title}"><div style="flex:1"><div class="cart-item-name">${p.title}</div><div class="cart-item-seller">by ${p.seller}</div><div class="cart-item-price">₹${p.price}/kg</div><div class="cart-item-qty"><button class="q-btn" onclick="updateQty(${p.id},-1)">−</button><span class="q-n">${ci.qty}</span><button class="q-btn" onclick="updateQty(${p.id},1)">+</button><span style="color:var(--muted);font-size:13px;margin-left:6px">= <strong style="color:var(--green)">₹${p.price*ci.qty}</strong></span></div></div><button class="remove-btn" onclick="removeCart(${p.id})">✕</button></div>`;}).join('')}</div>
-  <div class="cart-summary">
-    <div class="summary-row"><span>Subtotal (${cart.reduce((s,ci)=>s+ci.qty,0)} items)</span><span>₹${sub}</span></div>
-    <div class="summary-row"><span>Delivery</span><span style="color:var(--green)">FREE</span></div>
-    <div class="summary-total"><span>Total</span><span style="color:var(--green)">₹${sub}</span></div>
-    <button class="btn btn-primary" style="width:100%;margin-top:20px;padding:14px;font-size:15px;border-radius:14px;justify-content:center" onclick="showPage('checkout')">Proceed to Checkout →</button>
-  </div>`;
+  if(!cart.length) { c.innerHTML='<p>Empty cart</p>'; return; }
+  c.innerHTML = cart.map(ci=>{const p=products.find(x=>x.id===ci.id); return `<div>${p.title} - ${ci.qty}kg</div>`;}).join('') + '<button onclick="showPage(\'checkout\')">Checkout</button>';
 }
-function updateQty(id, d) { const i=cart.find(c=>c.id===id); if(i){i.qty=Math.max(0,i.qty+d);if(i.qty===0)cart=cart.filter(c=>c.id!==id);} updateBadge();renderCart(); }
-function removeCart(id) { cart=cart.filter(c=>c.id!==id); updateBadge();renderCart();showToast('🗑 Item removed'); }
 
 function buildCheckout() {
   const sub = cart.reduce((s,ci) => { const p=products.find(x=>x.id===ci.id); return s+(p?p.price*ci.qty:0); },0);
-  document.getElementById('coSubtotal').textContent = '₹'+sub;
   document.getElementById('coTotal').textContent = '₹'+sub;
-  const el = document.getElementById('orderItemsList');
-  el.innerHTML = cart.length ? cart.map(ci=>{const p=products.find(x=>x.id===ci.id);if(!p)return'';return`<div class="order-item-row"><img src="${p.img}" class="order-item-img" alt="${p.title}"><div><div class="order-item-name">${p.title}</div><div class="order-item-meta">${ci.qty} kg × ₹${p.price}</div></div><div class="order-item-price">₹${p.price*ci.qty}</div></div>`;}).join('') : '<p style="color:var(--muted);text-align:center;font-size:14px;padding:12px">No items</p>';
 }
-function selectPayment(el, m) { document.querySelectorAll('.payment-opt').forEach(o=>o.classList.remove('selected')); el.classList.add('selected'); paymentMethod=m; }
+
 function placeOrder() {
-  if(!cart.length){showToast('⚠️ Your cart is empty');return;}
-  if(!document.getElementById('deliveryAddr').value||!document.getElementById('buyerName').value){showToast('⚠️ Please fill all required fields');return;}
-  document.getElementById('orderId').textContent = '#FL' + Date.now().toString().slice(-6);
+  document.getElementById('orderId').textContent = 'ID: #FL' + Date.now().toString().slice(-6);
   showPage('success');
 }
 
 function calcFee() {
   const price = parseFloat(document.getElementById('sPrice').value);
   const box = document.getElementById('feeBox');
-  if(!price||price<=0){box.style.display='none';return;}
+  if(!price){box.style.display='none'; return;}
   box.style.display='block';
-  document.getElementById('fSale').textContent='₹'+price.toFixed(2);
-  document.getElementById('fFee').textContent='₹'+(price*.1).toFixed(2);
   document.getElementById('fEarn').textContent='₹'+(price*.9).toFixed(2);
 }
-function submitListing() {
-  const name=document.getElementById('sName').value, price=document.getElementById('sPrice').value, qty=document.getElementById('sQty').value;
-  if(!name||!price||!qty){showToast('⚠️ Please fill all required fields');return;}
-  showToast('✅ "'+name+'" listed successfully!');
-  setTimeout(()=>showPage('home'),1200);
-}
+
+function submitListing() { showToast('✅ Listed!'); setTimeout(()=>showPage('home'),1000); }
 
 function setAuthTab(tab) {
-  ['Login','Signup'].forEach(t=>{ document.getElementById('tab'+t).classList.remove('active'); document.getElementById('auth'+t).classList.remove('active'); });
-  const T = tab.charAt(0).toUpperCase()+tab.slice(1);
-  document.getElementById('tab'+T).classList.add('active');
-  document.getElementById('auth'+T).classList.add('active');
-}
-function setAuthStep(step) {
-  ['Login','Signup','Forgot'].forEach(f=>document.getElementById('auth'+f).classList.remove('active'));
-  if(step==='forgot') document.getElementById('authForgot').classList.add('active');
-  else { document.getElementById('authLogin').classList.add('active'); document.getElementById('tabLogin').classList.add('active'); document.getElementById('tabSignup').classList.remove('active'); }
-}
-function sendOtp() {
-  const e=document.getElementById('forgotEmail').value;
-  if(!e){showToast('⚠️ Enter your email first');return;}
-  document.getElementById('otpEmail').textContent=e;
-  document.getElementById('forgotStep1').style.display='none';
-  document.getElementById('forgotStep2').style.display='block';
-  showToast('📧 OTP sent to '+e);
-}
-function otpNext(el,num) { if(el.value&&num<4)document.querySelectorAll('.otp-input')[num].focus(); }
-function verifyOtp() {
-  const otp=Array.from(document.querySelectorAll('.otp-input')).map(i=>i.value).join('');
-  if(otp.length<4){showToast('⚠️ Enter the complete OTP');return;}
-  showToast('✅ Password reset successful!');
-  setTimeout(()=>{setAuthStep('login');document.getElementById('forgotStep1').style.display='block';document.getElementById('forgotStep2').style.display='none';document.querySelectorAll('.otp-input').forEach(i=>i.value='');},1200);
+  document.querySelectorAll('.auth-form').forEach(f=>f.classList.remove('active'));
+  document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('auth'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active');
+  document.getElementById('tab'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active');
 }
 
-let toastTimer;
 function showToast(msg) {
   const t=document.getElementById('toast');
   t.textContent=msg; t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>t.classList.remove('show'),2800);
+  setTimeout(()=>t.classList.remove('show'),2000);
 }
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+/* 4. EXECUTION AT THE END */
+renderProducts(products);
 </script>
 </body>
 </html>
