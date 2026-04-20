@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarmLink | Sell Produce</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen p-6">
+    <div class="max-w-md mx-auto bg-white rounded-[2.5rem] shadow-xl p-8">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">List Your Harvest</h2>
+        
+        <div class="space-y-5">
+            <input id="pName" type="text" placeholder="What are you selling?" class="w-full p-4 rounded-2xl bg-gray-50 border outline-none">
+            <div class="flex gap-2">
+                <input id="pQty" type="number" placeholder="Qty" class="w-2/3 p-4 rounded-2xl bg-gray-50 border outline-none">
+                <select class="w-1/3 p-4 rounded-2xl bg-gray-50 border outline-none"><option>KG</option><option>Quintal</option></select>
+            </div>
+            <input id="pPrice" type="number" placeholder="Price per unit (₹)" class="w-full p-4 rounded-2xl bg-gray-50 border outline-none">
+            <input type="text" placeholder="Expiry/Freshness" class="w-full p-4 rounded-2xl bg-gray-50 border outline-none">
+            <input type="text" placeholder="Location" class="w-full p-4 rounded-2xl bg-gray-50 border outline-none">
+            
+            <button onclick="calculateFee()" class="w-full bg-emerald-600 text-white py-5 rounded-2xl font-bold text-lg shadow-lg">Review Listing</button>
+        </div>
+    </div>
+
+    <div id="feeModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-6">
+        <div class="bg-white p-8 rounded-[2.5rem] w-full max-w-xs text-center shadow-2xl">
+            <h3 class="font-bold text-xl mb-4">Commission Detail</h3>
+            <div class="space-y-2 mb-6">
+                <div class="flex justify-between text-sm"><span>Sale Price:</span><span id="fPrice">₹0</span></div>
+                <div class="flex justify-between text-sm text-red-500"><span>10% Fee:</span><span id="fFee">₹0</span></div>
+                <hr>
+                <div class="flex justify-between font-bold text-lg"><span>You Get:</span><span id="fTotal">₹0</span></div>
+            </div>
+            <button onclick="alert('Successfully Listed!')" class="w-full bg-emerald-600 text-white py-4 rounded-2xl font-bold mb-3">Accept & List</button>
+            <button onclick="document.getElementById('feeModal').classList.add('hidden')" class="text-gray-400 font-bold">Go Back</button>
+        </div>
+    </div>
+
+    <script>
+        function calculateFee() {
+            const price = document.getElementById('pPrice').value;
+            if(!price) return alert("Enter price");
+            const fee = price * 0.10;
+            const total = price - fee;
+
+            document.getElementById('fPrice').innerText = '₹' + price;
+            document.getElementById('fFee').innerText = '₹' + fee;
+            document.getElementById('fTotal').innerText = '₹' + total;
+            document.getElementById('feeModal').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
