@@ -6,7 +6,7 @@
 <title>FarmLink | Farm-to-Table Marketplace</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-/* Keeping all your original CSS exactly as provided */
+/* Your Original CSS */
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --green:#2d6a4f;--green-light:#52b788;--green-pale:#d8f3dc;--green-dark:#1b4332;
@@ -292,6 +292,18 @@ footer strong{color:#fff}
     <p style="color:var(--muted);font-size:15px;margin-bottom:28px">Reach thousands of local buyers directly</p>
     <div class="big-card">
       <div class="form-group">
+        <label class="form-label">Product Image</label>
+        <input type="file" id="sFile" accept="image/*" style="display:none" onchange="handleImgPreview(this)">
+        <div onclick="document.getElementById('sFile').click()" style="width:100%; height:140px; border:2px dashed var(--border); border-radius:18px; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; background:#fafafa;">
+          <div id="uploadPrompt">
+            <span style="font-size:24px">📸</span>
+            <p style="font-size:11px; font-weight:700; color:var(--muted); margin-top:5px">UPLOAD PHOTO</p>
+          </div>
+          <img id="sPreview" style="display:none; width:100%; height:100%; object-fit:cover;">
+        </div>
+      </div>
+
+      <div class="form-group">
         <label class="form-label">Product Name</label>
         <input class="form-input" type="text" id="sName" placeholder="e.g. Organic Tomatoes">
       </div>
@@ -302,7 +314,7 @@ footer strong{color:#fff}
         </div>
         <div class="form-group">
           <label class="form-label">Unit</label>
-          <select class="form-input"><option>KG</option><option>Quintal</option></select>
+          <select class="form-input" id="sUnit"><option>KG</option><option>Quintal</option></select>
         </div>
       </div>
       <div class="form-row">
@@ -312,7 +324,12 @@ footer strong{color:#fff}
         </div>
         <div class="form-group">
           <label class="form-label">Category</label>
-          <select class="form-input"><option>Vegetable</option><option>Fruit</option></select>
+          <select class="form-input" id="sCat">
+            <option value="vegetable">Vegetable</option>
+            <option value="root">Root Crop</option>
+            <option value="spice">Spice</option>
+            <option value="sweet">Natural Sweet</option>
+          </select>
         </div>
       </div>
       <div class="fee-box" id="feeBox" style="display:none">
@@ -378,76 +395,91 @@ footer strong{color:#fff}
 <div class="toast" id="toast"></div>
 
 <script>
-// --- CORRECTED PRODUCT DATA ---
+// --- PRODUCT DATA ---
 const products = [
   {id:1,title:"Carrot",price:50,seller:"Ravi Kumar",img:"https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=600",cat:"root",badge:"Just Harvested",desc:"Crunchy, sweet carrots from Ravi's farm."},
-  {id:2,title:"Raw Honey",price:420,seller:"Anjali M.",img:"honey.jpeg",cat:"sweet",badge:"Pure Natural",desc:"Unprocessed wildflower honey."}, // Corrected honey.jpeg
+  {id:2,title:"Raw Honey",price:420,seller:"Anjali M.",img:"honey.jpeg",cat:"sweet",badge:"Pure Natural",desc:"Unprocessed wildflower honey."},
   {id:3,title:"Onion",price:40,seller:"Suresh P.",img:"https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=600",cat:"vegetable",badge:"Bulk Available",desc:"Red onions with bold flavour."},
   {id:4,title:"Spinach",price:20,seller:"Kiran G.",img:"https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=600",cat:"vegetable",badge:"Farm Fresh",desc:"Tender, dark green spinach."},
   {id:5,title:"Tomato",price:30,seller:"Babu R.",img:"https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=600",cat:"vegetable",badge:"Seasonal",desc:"Juicy ripe tomatoes."},
   {id:6,title:"Potato",price:25,seller:"Mini Jacob",img:"https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=600",cat:"root",badge:"Premium Grade",desc:"All-purpose potatoes."},
-  {id:7,title:"Spices",price:180,seller:"Sunny V.",img:"https://images.unsplash.com/photo-1615485500704-8e990f9900f7?w=600",cat:"spice",badge:"Aromatic",desc:"Fresh spicy blend (renamed Ginger)."}, // Renamed Ginger -> Spices
-  {id:8,title:"Cucumber",price:60,seller:"Latha S.",img:"cucumber.jpeg",cat:"vegetable",badge:"Farm Fresh",desc:"Cool, crisp farm-grown cucumbers."} // Corrected cucumber.jpeg
+  {id:7,title:"Spices",price:180,seller:"Sunny V.",img:"https://images.unsplash.com/photo-1615485500704-8e990f9900f7?w=600",cat:"spice",badge:"Aromatic",desc:"Fresh spicy blend."},
+  {id:8,title:"Cucumber",price:60,seller:"Latha S.",img:"cucumber.jpeg",cat:"vegetable",badge:"Farm Fresh",desc:"Cool, crisp farm-grown cucumbers."}
 ];
 
 let cart = [];
 let currentProduct = null;
 let modalQty = 1;
 let currentCat = 'all';
-let isLoggedIn = false; // Gated Checkout State
+let isLoggedIn = false;
+let tempImgData = ""; // New: Holds uploaded image string
 
-// Logic for Gated Checkout
-function requireAuth(targetPage, callback) {
-  if (!isLoggedIn) {
-    showPage('auth');
-    showToast("🔒 Please Login or Signup to continue");
-  } else {
-    showPage(targetPage);
-    if (callback) callback();
-  }
-}
+// --- NEW IMAGE & SELL FUNCTIONS ---
 
-// Intercept 'Buy Now' in modal
-function buyNowWithAuth() {
-  addToCartModal();
-  closeModal();
-  requireAuth('checkout');
-}
-
-// Intercept 'Confirm Order' in checkout
-function confirmOrderWithAuth() {
-  if (!isLoggedIn) {
-    showPage('auth');
-    showToast("🔒 Please Login or Signup to confirm your order");
-  } else {
-    placeOrder();
-  }
-}
-
-// Update login state
-function handleLogin() {
-    isLoggedIn = true;
-    updateNav();
-    showPage('home');
-    showToast("Successfully logged in!");
-}
-function handleSignup() {
-    isLoggedIn = true;
-    updateNav();
-    showPage('home');
-    showToast("Account created!");
-}
-
-function updateNav() {
-    const sec = document.getElementById('authSection');
-    if(isLoggedIn) {
-        sec.innerHTML = `<button style="color:var(--green);font-weight:600">Profile</button>`;
-    } else {
-        sec.innerHTML = `<button id="loginBtn" onclick="showPage('auth')">Login</button>`;
+function handleImgPreview(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('sPreview').src = e.target.result;
+            document.getElementById('sPreview').style.display = 'block';
+            document.getElementById('uploadPrompt').style.display = 'none';
+            tempImgData = e.target.result; 
+        }
+        reader.readAsDataURL(input.files[0]);
     }
 }
 
-// --- Keeping all other original functions unchanged ---
+function calcFee() {
+    const price = document.getElementById('sPrice').value;
+    const box = document.getElementById('feeBox');
+    if(price > 0) {
+        box.style.display = 'block';
+        const fee = price * 0.1;
+        document.getElementById('fSale').textContent = '₹' + price;
+        document.getElementById('fFee').textContent = '₹' + fee.toFixed(2);
+        document.getElementById('fEarn').textContent = '₹' + (price - fee).toFixed(2);
+    } else {
+        box.style.display = 'none';
+    }
+}
+
+function submitListing() {
+    const name = document.getElementById('sName').value;
+    const price = document.getElementById('sPrice').value;
+    const cat = document.getElementById('sCat').value;
+
+    if(!name || !price) {
+        showToast("❌ Please fill in the details");
+        return;
+    }
+
+    const newProd = {
+        id: Date.now(),
+        title: name,
+        price: parseInt(price),
+        seller: "Pranav (Local Farmer)",
+        img: tempImgData || "https://images.unsplash.com/photo-1615485290382-441e4d0c9cb5?w=600",
+        cat: cat,
+        badge: "New Listing",
+        desc: "Fresh produce directly from my farm."
+    };
+
+    products.unshift(newProd); // Add to beginning
+    filterProducts(); // Refresh market grid
+    showPage('home');
+    showToast("✅ Product listed in Market!");
+    
+    // Reset Form
+    document.getElementById('sName').value = "";
+    document.getElementById('sPrice').value = "";
+    document.getElementById('sQty').value = "";
+    document.getElementById('sPreview').style.display = 'none';
+    document.getElementById('uploadPrompt').style.display = 'block';
+    tempImgData = "";
+}
+
+// --- ORIGINAL MARKET LOGIC ---
+
 function showPage(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   const target = document.getElementById('page-' + name);
@@ -484,13 +516,20 @@ function setCategory(cat, el) {
 }
 
 function filterProducts() {
-  let list = currentCat === 'all' ? products : products.filter(p => p.cat === currentCat);
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  let list = products.filter(p => {
+      const matchCat = currentCat === 'all' || p.cat === currentCat;
+      const matchSearch = p.title.toLowerCase().includes(search);
+      return matchCat && matchSearch;
+  });
   renderProducts(list);
 }
 
 function openModal(id) {
   const p = products.find(x => x.id === id);
   currentProduct = p;
+  modalQty = 1;
+  document.getElementById('modalQty').textContent = 1;
   document.getElementById('mTitle').textContent = p.title;
   document.getElementById('mPrice').textContent = '₹'+p.price;
   document.getElementById('mSeller').textContent = 'Sold by '+p.seller;
@@ -498,8 +537,10 @@ function openModal(id) {
   document.getElementById('mImg').src = p.img;
   document.getElementById('productModal').classList.add('show');
 }
+
 function closeModal() { document.getElementById('productModal').classList.remove('show'); }
 function changeQty(d) { modalQty = Math.max(1, modalQty+d); document.getElementById('modalQty').textContent=modalQty; }
+
 function addToCartModal() { if(currentProduct){addToCart(currentProduct.id, modalQty); closeModal();}}
 function quickAdd(id) { addToCart(id, 1); }
 
@@ -509,6 +550,7 @@ function addToCart(id, qty) {
   updateBadge();
   showToast('✅ Added to cart!');
 }
+
 function updateBadge() {
   const total = cart.reduce((s,c)=>s+c.qty,0);
   const b=document.getElementById('cartBadge');
@@ -517,37 +559,149 @@ function updateBadge() {
 
 function renderCart() {
   const c = document.getElementById('cartContent');
-  if(!cart.length){c.innerHTML='Empty cart'; return;}
+  if(!cart.length){
+      c.innerHTML='<div class="cart-empty"><p style="color:var(--muted)">Your cart is empty.</p><button class="btn btn-outline" style="margin-top:20px" onclick="showPage(\'home\')">Start Shopping</button></div>'; 
+      return;
+  }
+  const itemsHtml = cart.map(ci => {
+      const p = products.find(x => x.id === ci.id);
+      return `
+        <div class="cart-item">
+          <img src="${p.img}" class="cart-item-img">
+          <div style="flex:1">
+            <div class="cart-item-name">${p.title}</div>
+            <div class="cart-item-seller">By ${p.seller}</div>
+            <div class="cart-item-price">₹${p.price * ci.qty}</div>
+            <div class="cart-item-qty">
+              <button class="q-btn" onclick="updateCartQty(${p.id}, -1)">-</button>
+              <span class="q-n">${ci.qty}</span>
+              <button class="q-btn" onclick="updateCartQty(${p.id}, 1)">+</button>
+            </div>
+          </div>
+          <button class="remove-btn" onclick="removeFromCart(${p.id})">✕</button>
+        </div>
+      `;
+  }).join('');
+
   const sub = cart.reduce((s,ci)=>{const p=products.find(x=>x.id===ci.id); return s+(p?p.price*ci.qty:0);},0);
-  c.innerHTML = cart.map(ci=>{const p=products.find(x=>x.id===ci.id); return `<div>${p.title} - ${ci.qty}kg</div>`;}).join('') + 
-  `<button class="btn btn-primary" style="width:100%;margin-top:15px" onclick="showPage('checkout')">Proceed to Checkout</button>`;
+
+  c.innerHTML = `
+    <div class="cart-items">${itemsHtml}</div>
+    <div class="cart-summary">
+      <div class="summary-row"><span>Subtotal</span><span>₹${sub}</span></div>
+      <div class="summary-row"><span>Delivery</span><span style="color:var(--green)">FREE</span></div>
+      <div class="summary-total"><span>Total</span><span>₹${sub}</span></div>
+      <button class="btn btn-primary" style="width:100%;margin-top:20px;justify-content:center;padding:14px" onclick="requireAuth('checkout')">Proceed to Checkout →</button>
+    </div>
+  `;
+}
+
+function updateCartQty(id, d) {
+    const item = cart.find(c => c.id === id);
+    if(item) {
+        item.qty = Math.max(1, item.qty + d);
+        renderCart();
+        updateBadge();
+    }
+}
+
+function removeFromCart(id) {
+    cart = cart.filter(c => c.id !== id);
+    renderCart();
+    updateBadge();
 }
 
 function buildCheckout() {
-  const sub = cart.reduce((s,ci)=>{const p=products.find(x=>x.id===ci.id); return s+(p?p.price*ci.qty:0);},0);
-  document.getElementById('coTotal').textContent='₹'+sub;
-}
-function selectPayment(el, m){
-  document.querySelectorAll('.payment-opt').forEach(o=>o.classList.remove('selected')); el.classList.add('selected');
-}
-function placeOrder(){
-  document.getElementById('orderId').textContent = 'ID: FL-'+Date.now().toString().slice(-5);
-  showPage('success');
-}
-function submitListing(){ showToast('✅ Listed!'); setTimeout(()=>showPage('home'),1000);}
-function showToast(msg){
-  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2000);
-}
-function setAuthTab(tab){
-  document.querySelectorAll('.auth-form').forEach(f=>f.classList.remove('active'));
-  document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('auth'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active');
-  document.getElementById('tab'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active');
+    const list = document.getElementById('orderItemsList');
+    const sub = cart.reduce((s,ci)=>{const p=products.find(x=>x.id===ci.id); return s+(p?p.price*ci.qty:0);},0);
+    
+    list.innerHTML = cart.map(ci => {
+        const p = products.find(x => x.id === ci.id);
+        return `
+            <div class="order-item-row">
+                <img src="${p.img}" class="order-item-img">
+                <div>
+                    <div class="order-item-name">${p.title}</div>
+                    <div class="order-item-meta">${ci.qty} kg · ₹${p.price}/kg</div>
+                </div>
+                <div class="order-item-price">₹${p.price * ci.qty}</div>
+            </div>
+        `;
+    }).join('');
+
+    document.getElementById('coSubtotal').textContent = '₹' + sub;
+    document.getElementById('coTotal').textContent = '₹' + sub;
 }
 
-renderProducts(products);
-updateNav();
+function selectPayment(el, type) {
+    document.querySelectorAll('.payment-opt').forEach(opt => opt.classList.remove('selected'));
+    el.classList.add('selected');
+}
+
+function placeOrder() {
+    const orderId = 'FL' + Math.floor(Math.random()*90000 + 10000);
+    document.getElementById('orderId').textContent = orderId;
+    showPage('success');
+}
+
+function requireAuth(target) {
+    if(!isLoggedIn) {
+        showPage('auth');
+        showToast("🔒 Please login to continue");
+    } else {
+        showPage(target);
+    }
+}
+
+function handleLogin() { 
+    isLoggedIn = true; 
+    document.getElementById('authSection').innerHTML = `<button style="color:var(--green);font-weight:600">Profile</button>`;
+    showPage('home'); 
+    showToast("Welcome back!"); 
+}
+
+function handleSignup() { 
+    isLoggedIn = true; 
+    document.getElementById('authSection').innerHTML = `<button style="color:var(--green);font-weight:600">Profile</button>`;
+    showPage('home'); 
+    showToast("Account Created!"); 
+}
+
+function setAuthTab(type) {
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+    if(type === 'login') {
+        document.getElementById('tabLogin').classList.add('active');
+        document.getElementById('authLogin').classList.add('active');
+    } else {
+        document.getElementById('tabSignup').classList.add('active');
+        document.getElementById('authSignup').classList.add('active');
+    }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+function buyNowWithAuth() {
+    const p = currentProduct;
+    addToCart(p.id, modalQty);
+    closeModal();
+    requireAuth('checkout');
+}
+
+function confirmOrderWithAuth() {
+    if(!isLoggedIn) {
+        showPage('auth');
+    } else {
+        placeOrder();
+    }
+}
+
+window.onload = () => renderProducts(products);
 </script>
 </body>
 </html>
